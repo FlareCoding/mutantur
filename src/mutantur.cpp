@@ -128,13 +128,13 @@ namespace mutantur
 		{
 			if (i + 3 <= mutation_length)
 			{
-				auto& instructions = mutation_instructions_3op[util::random_in_range(0, (int)mutation_instructions_3op.size() - 1)];
+				auto& instructions = mutation_instructions_3op[utils::random_in_range(0, (int)mutation_instructions_3op.size() - 1)];
 				memcpy_s(&m_source[mutation_start_index + i], 3, &instructions[0], 3);
 				i += 3;
 			}
 			else if (i + 2 <= mutation_length)
 			{
-				auto& instructions = mutation_instructions_2op[util::random_in_range(0, (int)mutation_instructions_2op.size() - 1)];
+				auto& instructions = mutation_instructions_2op[utils::random_in_range(0, (int)mutation_instructions_2op.size() - 1)];
 				memcpy_s(&m_source[mutation_start_index + i], 2, &instructions[0], 2);
 				i += 2;
 			}
@@ -149,14 +149,15 @@ namespace mutantur
 		if (!function_start_index)
 			return;
 
-		fn_len = util::calculate_function_size(&m_source[function_start_index]);
-		byte insertion_space = util::calculate_function_insertion_space(fn_len);
+		fn_len = utils::calculate_function_size(&m_source[function_start_index]);
+		byte insertion_space = utils::calculate_function_insertion_space(fn_len);
 
 		if (insertion_space >= 2)
 		{
 			insert_mutation_flag_and_body(function_start_index, fn_len, insertion_space);
 		}
-		else if (m_source[function_start_index] == MUTANTUR_MUTATION_FL)
+		
+		if (m_source[function_start_index] == MUTANTUR_MUTATION_FL)
 		{
 			mutate_function(function_start_index);
 		}

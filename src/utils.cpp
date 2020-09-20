@@ -1,8 +1,9 @@
 #include "utils.h"
+#include <Windows.h>
 
 namespace mutantur
 {
-    namespace util
+    namespace utils
     {
         std::string hex_dump(unsigned char* address, size_t size)
         {
@@ -72,6 +73,41 @@ namespace mutantur
             std::mt19937 gen(rd());
             std::uniform_int_distribution<> distr(low, high);
             return distr(gen);
+        }
+
+        void merge_clone_file(int exit_code, const char* clone_filename, const char* target_filename, const char* cloning_bat_filename)
+        {
+            // create a .bat file in the temp folder
+            char buf[MAX_PATH] = { 0 };
+            GetTempPathA(MAX_PATH, buf);
+            std::string script_path = std::string(buf) + "\\mtclonescrpt.bat";
+
+            auto clone_path = std::string(clone_filename);
+            auto target_path = std::string(target_filename);
+
+            std::string script_src = std::string("@echo off\n") +
+                "timeout 1 > nul\n" +
+                "set clone=\"" + clone_path + "\"\n" +
+                "set target=\"" + target_path + "\"\n" +
+                "del %target% 2>nul\n" +
+                "call :expand %target%\n" +
+                ":expand\n" +
+                "set target_filename=%~nx1\n" +
+                "ren %clone% %target_filename% 2>nul\n" +
+                "%target%\n" +
+                "(goto) 2>nul & del \"%~f0\" 2>nul";
+
+            std::ofstream script(script_path, std::ios::out);
+            script << script_src;
+            script.close();
+
+            STARTUPINFO info = { sizeof(info) };
+            PROCESS_INFORMATION processInfo;
+            CreateProcess(script_path.c_str(), NULL, NULL, NULL, TRUE, 0, NULL, NULL, &info, &processInfo);
+            
+            CloseHandle(processInfo.hProcess);
+            CloseHandle(processInfo.hThread);
+            exit(exit_code);
         }
     }
 }
