@@ -101,9 +101,9 @@ namespace mutantur
             script << script_src;
             script.close();
 
-            STARTUPINFO info = { sizeof(info) };
+            STARTUPINFOA info = { sizeof(info) };
             PROCESS_INFORMATION processInfo;
-            CreateProcess(script_path.c_str(), NULL, NULL, NULL, TRUE, 0, NULL, NULL, &info, &processInfo);
+            CreateProcessA(script_path.c_str(), NULL, NULL, NULL, TRUE, 0, NULL, NULL, &info, &processInfo);
             
             CloseHandle(processInfo.hProcess);
             CloseHandle(processInfo.hThread);
