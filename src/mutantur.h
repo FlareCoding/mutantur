@@ -6,13 +6,22 @@ namespace mutantur
 	class mutant
 	{
 	public:
-
+		/// If filename is passed in, it reads the executable into a byte array.
 		mutant(const char* filename = 0);
 		~mutant();
 
+		/// Reads the executable into a byte array.
+		/// @param filename Name of the program to read the contents of.
+		/// @returns Success status.
 		bool open(const char* filename);
+
+		/// Creates a new file on disk and writes the mutated code to it.
+		/// @param filename Name of the file to create and save the mutation to.
 		void finalize_mutation(const char* filename);
 
+		/// Mutates the function's code.
+		/// @param address Known start address of the function.
+		/// @param fn_len Known length of the function in bytes.
 		void mutate(byte* address, size_t fn_len);
 
 	private:
